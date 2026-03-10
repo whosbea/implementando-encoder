@@ -1,9 +1,15 @@
 import numpy as np
 import pandas as pd
+
 from attention import initialize_attention_weights, self_attention
-from math_utils import relu, softmax, layer_norm
+from math_utils import layer_norm
 from feed_forward import initialize_ffn_weights, feed_forward
 from encoder import initialize_encoder_stack, encoder_stack
+from visualization import (
+    plot_encoder_pipeline,
+    plot_encoder_layer_detail,
+)
+
 
 def tokenize(sentence: str) -> list[str]:
     """
@@ -78,8 +84,13 @@ def create_input_tensor(embeddings: np.ndarray) -> np.ndarray:
 
 
 def main():
+    np.random.seed(42)
+
     sentence = "os pinguins não tem joelhos"
     d_model = 64
+    d_k = 64
+    d_ff = 128
+    n_layers = 6
 
     print("=== ETAPA 1: PREPARAÇÃO DOS DADOS ===")
 
@@ -109,13 +120,20 @@ def main():
     X = create_input_tensor(embeddings)
     print("Shape final do tensor X:", X.shape)
 
-
     print("\n=== ETAPA 2: SELF-ATTENTION ===")
 
-    d_k = d_model
     w_q, w_k, w_v = initialize_attention_weights(d_model, d_k)
-
     attention_output, debug_info = self_attention(X, w_q, w_k, w_v)
+
+    print("Shape de Q:", debug_info["q"].shape)
+    print("Shape de K:", debug_info["k"].shape)
+    print("Shape de V:", debug_info["v"].shape)
+    print("Shape dos scaled_scores:", debug_info["scaled_scores"].shape)
+    print("Shape dos attention_weights:", debug_info["attention_weights"].shape)
+    print("Shape da saída da atenção:", attention_output.shape)
+
+    print("\nSoma das linhas dos attention_weights:")
+    print(np.sum(debug_info["attention_weights"], axis=-1))
 
     # Residual connection após atenção
     x_res1 = X + attention_output
@@ -135,21 +153,9 @@ def main():
     print("\nVariância por token após layer norm:")
     print(np.var(x_norm1, axis=-1))
 
-    print("Shape de Q:", debug_info["q"].shape)
-    print("Shape de K:", debug_info["k"].shape)
-    print("Shape de V:", debug_info["v"].shape)
-    print("Shape dos scaled_scores:", debug_info["scaled_scores"].shape)
-    print("Shape dos attention_weights:", debug_info["attention_weights"].shape)
-    print("Shape da saída da atenção:", attention_output.shape)
-
-    print("\nSoma das linhas dos attention_weights:")
-    print(np.sum(debug_info["attention_weights"], axis=-1))
-
     print("\n=== ETAPA 4: FEED-FORWARD NETWORK ===")
 
-    d_ff = 128
     w1, b1, w2, b2 = initialize_ffn_weights(d_model, d_ff)
-
     x_ffn, ffn_debug = feed_forward(x_norm1, w1, b1, w2, b2)
 
     print("Shape da entrada da FFN:", x_norm1.shape)
@@ -175,10 +181,6 @@ def main():
 
     print("\n=== ETAPA 6: ENCODER COMPLETO ===")
 
-    d_k = d_model
-    d_ff = 128
-    n_layers = 6
-
     encoder_layers = initialize_encoder_stack(n_layers, d_model, d_k, d_ff)
     encoder_output, encoder_debug = encoder_stack(X, encoder_layers)
 
@@ -192,6 +194,24 @@ def main():
         print("  Shape de x_norm1:", layer_debug["x_norm1"].shape)
         print("  Shape de ffn_output:", layer_debug["ffn_output"].shape)
         print("  Shape de x_out:", layer_debug["x_out"].shape)
+
+    print("\n=== ETAPA 7: GERANDO DIAGRAMAS ===")
+
+    plot_encoder_pipeline(
+        output_dir="outputs",
+        filename="encoder_pipeline.png",
+        show=True
+    )
+
+    plot_encoder_layer_detail(
+        output_dir="outputs",
+        filename="encoder_layer_detail.png",
+        show=True
+    )
+
+    print("Diagramas salvos em outputs/")
+    print("\n=== TESTE CONCLUÍDO ===")
+
 
 if __name__ == "__main__":
     main()
