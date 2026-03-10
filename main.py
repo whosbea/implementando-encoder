@@ -3,7 +3,7 @@ import pandas as pd
 from attention import initialize_attention_weights, self_attention
 from math_utils import relu, softmax, layer_norm
 from feed_forward import initialize_ffn_weights, feed_forward
-
+from encoder import initialize_encoder_stack, encoder_stack
 
 def tokenize(sentence: str) -> list[str]:
     """
@@ -172,6 +172,26 @@ def main():
 
     print("\nVariância por token após segundo layer norm:")
     print(np.var(x_out, axis=-1))
+
+    print("\n=== ETAPA 6: ENCODER COMPLETO ===")
+
+    d_k = d_model
+    d_ff = 128
+    n_layers = 6
+
+    encoder_layers = initialize_encoder_stack(n_layers, d_model, d_k, d_ff)
+    encoder_output, encoder_debug = encoder_stack(X, encoder_layers)
+
+    print("Shape da entrada do encoder:", X.shape)
+    print("Número de camadas:", n_layers)
+    print("Shape da saída final do encoder:", encoder_output.shape)
+
+    for layer_debug in encoder_debug:
+        layer_idx = layer_debug["layer_index"]
+        print(f"\nCamada {layer_idx}:")
+        print("  Shape de x_norm1:", layer_debug["x_norm1"].shape)
+        print("  Shape de ffn_output:", layer_debug["ffn_output"].shape)
+        print("  Shape de x_out:", layer_debug["x_out"].shape)
 
 if __name__ == "__main__":
     main()
