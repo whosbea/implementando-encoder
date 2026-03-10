@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+from attention import initialize_attention_weights, self_attention
+from math_utils import relu, softmax, layer_norm
+
 
 
 def tokenize(sentence: str) -> list[str]:
@@ -106,24 +109,43 @@ def main():
     X = create_input_tensor(embeddings)
     print("Shape final do tensor X:", X.shape)
 
-    print("\n=== TESTE CONCLUÍDO ===")
+
+    print("\n=== ETAPA 2: SELF-ATTENTION ===")
+
+    d_k = d_model
+    w_q, w_k, w_v = initialize_attention_weights(d_model, d_k)
+
+    attention_output, debug_info = self_attention(X, w_q, w_k, w_v)
+
+    # Residual connection após atenção
+    x_res1 = X + attention_output
+
+    # Layer normalization
+    x_norm1 = layer_norm(x_res1)
+
+    print("\n=== ETAPA 3: ADD & NORM APÓS SELF-ATTENTION ===")
+    print("Shape de X original:", X.shape)
+    print("Shape da saída da atenção:", attention_output.shape)
+    print("Shape após residual:", x_res1.shape)
+    print("Shape após layer norm:", x_norm1.shape)
+
+    print("\nMédia por token após layer norm:")
+    print(np.mean(x_norm1, axis=-1))
+
+    print("\nVariância por token após layer norm:")
+    print(np.var(x_norm1, axis=-1))
+
+    print("Shape de Q:", debug_info["q"].shape)
+    print("Shape de K:", debug_info["k"].shape)
+    print("Shape de V:", debug_info["v"].shape)
+    print("Shape dos scaled_scores:", debug_info["scaled_scores"].shape)
+    print("Shape dos attention_weights:", debug_info["attention_weights"].shape)
+    print("Shape da saída da atenção:", attention_output.shape)
+
+    print("\nSoma das linhas dos attention_weights:")
+    print(np.sum(debug_info["attention_weights"], axis=-1))
+
 
 
 if __name__ == "__main__":
     main()
-    from math_utils import relu, softmax, layer_norm
-
-    test_array = np.array([[1.0, 2.0, 3.0], [-1.0, 0.0, 1.0]])
-
-    print("\n=== TESTE DAS FUNÇÕES MATEMÁTICAS ===")
-    print("Entrada:")
-    print(test_array)
-
-    print("\nReLU:")
-    print(relu(test_array))
-
-    print("\nSoftmax:")
-    print(softmax(test_array, axis=-1))
-
-    print("\nLayerNorm:")
-    print(layer_norm(test_array))
