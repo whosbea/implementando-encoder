@@ -13,7 +13,6 @@ A implementação foi construída utilizando apenas:
 
 O objetivo é compreender, passo a passo, como os dados percorrem as camadas do encoder, desde a preparação da frase de entrada até a geração da saída final contextualizada.
 
----
 
 ## Objetivo do laboratório
 
@@ -30,15 +29,11 @@ O objetivo deste laboratório é implementar os componentes principais de um **T
 
 Além disso, o projeto gera diagramas visuais do fluxo geral do encoder e do detalhamento de uma camada.
 
----
-
 ## Frase utilizada no experimento
 
 ```
 os pinguins não tem joelhos
 ```
-
----
 
 ## Estrutura do projeto
 
@@ -96,7 +91,6 @@ implementando-encoder/
 - **README.md**  
   Arquivo de documentação principal do projeto, contendo descrição, objetivo, estrutura, instruções de execução e observações sobre a implementação.
 
----
 
 ## Requisitos
 
@@ -106,7 +100,6 @@ Antes de executar o projeto, instale as dependências abaixo.
 python -m pip install numpy pandas matplotlib
 ```
 
----
 
 ## Como executar
 
@@ -122,7 +115,6 @@ Ou, dependendo do ambiente:
 python main.py
 ```
 
----
 
 ## Etapas implementadas
 ![fluxo geral](imgs/fluxo_geral_transformer.png)
@@ -163,7 +155,6 @@ O projeto executa as seguintes etapas:
    - geração do fluxo geral do encoder
    - geração do detalhamento de uma camada do encoder
 
----
 
 ## Shapes principais do projeto
 
@@ -186,25 +177,23 @@ Saída final do encoder:
 
 - **encoder_output:** `(1, 5, 64)`
 
----
 
 ## Fórmulas principais utilizadas
 
 ### Self-Attention
 
 
-Attention(Q, K, V) = softmax((QK^T) / sqrt(d_k))V
+$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$
 
 
 ### Feed-Forward Network
 
-FFN(x) = max(0, xW1 + b1)W2 + b2
+$FFN(x) = \max(0, xW_1 + b_1)W_2 + b_2$
 
 ### Layer Normalization
 
-LayerNorm(x) = (x - μ) / sqrt(σ² + ε)
+$LayerNorm(x) = \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}}$
 
----
 
 ## Observações
 
@@ -213,13 +202,11 @@ LayerNorm(x) = (x - μ) / sqrt(σ² + ε)
 - O objetivo é compreender a arquitetura e o fluxo matemático do encoder.
 - Como os pesos são aleatórios, os valores gerados servem para estudo estrutural e não para inferência real de linguagem natural.
 
----
 
 ## Referência principal
 
 VASWANI, Ashish et al. **Attention Is All You Need**. 2017.
 
----
 
 ## Conclusão
 
