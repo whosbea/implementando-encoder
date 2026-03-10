@@ -157,6 +157,21 @@ def main():
     print("Shape após ReLU:", ffn_debug["hidden_relu"].shape)
     print("Shape da saída da FFN:", x_ffn.shape)
 
+    print("\n=== ETAPA 5: ADD & NORM APÓS FFN ===")
+
+    x_res2 = x_norm1 + x_ffn
+    x_out = layer_norm(x_res2)
+
+    print("Shape de x_norm1:", x_norm1.shape)
+    print("Shape da saída da FFN:", x_ffn.shape)
+    print("Shape após segundo residual:", x_res2.shape)
+    print("Shape final da camada do encoder:", x_out.shape)
+
+    print("\nMédia por token após segundo layer norm:")
+    print(np.mean(x_out, axis=-1))
+
+    print("\nVariância por token após segundo layer norm:")
+    print(np.var(x_out, axis=-1))
 
 if __name__ == "__main__":
     main()
