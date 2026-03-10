@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from attention import initialize_attention_weights, self_attention
 from math_utils import relu, softmax, layer_norm
-
+from feed_forward import initialize_ffn_weights, feed_forward
 
 
 def tokenize(sentence: str) -> list[str]:
@@ -145,6 +145,17 @@ def main():
     print("\nSoma das linhas dos attention_weights:")
     print(np.sum(debug_info["attention_weights"], axis=-1))
 
+    print("\n=== ETAPA 4: FEED-FORWARD NETWORK ===")
+
+    d_ff = 128
+    w1, b1, w2, b2 = initialize_ffn_weights(d_model, d_ff)
+
+    x_ffn, ffn_debug = feed_forward(x_norm1, w1, b1, w2, b2)
+
+    print("Shape da entrada da FFN:", x_norm1.shape)
+    print("Shape após primeira linear:", ffn_debug["hidden_linear"].shape)
+    print("Shape após ReLU:", ffn_debug["hidden_relu"].shape)
+    print("Shape da saída da FFN:", x_ffn.shape)
 
 
 if __name__ == "__main__":
