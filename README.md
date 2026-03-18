@@ -211,3 +211,6 @@ VASWANI, Ashish et al. **Attention Is All You Need**. 2017.
 ## Conclusão
 
 A implementação permitiu compreender, de forma prática, as operações internas de um Transformer Encoder, incluindo o mecanismo de self-attention, as conexões residuais, a normalização em camada e a rede feed-forward. O projeto evidencia como os dados são transformados ao longo de 6 camadas do encoder, preservando o shape de entrada e refinando as representações vetoriais dos tokens.
+
+## Informações importantes
+Este projeto contou com apoio de IA (ChatGPT 5.4 Thinking) na geração e organização do código. Todo o conteúdo foi revisado, ajustado e estudado por Beatriz Barreto.
